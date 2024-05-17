@@ -1,0 +1,19 @@
+{
+    "name": "datnguyen/user",
+    "description": "demo user packages",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "datnguyen",
+            "email": "quocdatforwork@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "datnguyen\\user\\src\\": "src/"
+        }
+    }
+}

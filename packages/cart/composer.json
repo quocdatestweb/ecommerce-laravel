@@ -1,0 +1,19 @@
+{
+    "name": "datnguyen/cart",
+    "description": "demo",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "nguyendat",
+            "email": "quocdatforwork@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "datnguyen\\cart\\": "src/"
+        }
+    }
+}

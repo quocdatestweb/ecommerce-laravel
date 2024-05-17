@@ -1,0 +1,19 @@
+{
+    "name": "datnguyen/product",
+    "description": "Demo product packages",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "quocdat",
+            "email": "quocdatforwork@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "datnguyen\\product\\": "src/"
+        }
+    }
+}
