@@ -10,7 +10,7 @@
 								<h3 class="footer-title">Giới thiệu</h3>
 								{{-- <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut.</p> --}}
 								<ul class="footer-links">
-									<li><a href="#"><i class="fa fa-map-marker"></i>178 Võ Thị Sáu, Phường Võ Thị Sáu, Quận 3, TP.Hồ Chí Minh, Việt Nam</a></li>
+									<li><a href="#"><i class="fa fa-map-marker"></i>19 Nguyễn Hữu Thọ, phường Tân Phong, Quận 7, Thành phố Hồ Chí Minh</a></li>
 									<li><a href="#"><i class="fa fa-phone"></i> +066-141-8516</a></li>
 									<li><a href="#"><i class="fa fa-envelope-o"></i> dat.nguyen@opsgreat.vn</a></li>
 								</ul>

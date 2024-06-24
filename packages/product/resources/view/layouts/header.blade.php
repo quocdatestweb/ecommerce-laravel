@@ -5,15 +5,44 @@
             <ul class="header-links pull-left">
                 <li><a href="#"><i class="fa fa-phone"></i> +066-141-8516</a></li>
                 <li><a href="#"><i class="fa fa-envelope-o"></i> dat.nguyen@opsgreat.vn</a></li>
-                <li><a href="#"><i class="fa fa-map-marker"></i> 178 Võ Thị Sáu, Phường Võ Thị Sáu, Quận 3, TP.Hồ
-                        Chí Minh, Việt Nam</a></li>
+                <li><a href="#"><i class="fa fa-map-marker"></i>19 Nguyễn Hữu Thọ, phường Tân Phong, Quận 7, TP HCM</a></li>
             </ul>
             <ul class="header-links pull-right">
-                <li><a href="{{ route('user.register') }}"><i class="fa fa-registered"></i> Đăng ký</a></li>
-                <li><a href="{{ route('user.login') }}"><i class="fa fa-user-o"></i> Đăng nhập</a></li>
+                {{-- @if ($role != 0 || $role != 1)
+                    <li><a href="{{ route('user.register') }}"><i class="fa fa-registered"></i> Đăng ký</a></li>
+                    <li><a href="{{ route('user.login') }}"><i class="fa fa-user-o"></i> Đăng nhập</a></li>
+                @elseif ($role == 0 || $role == 1)
+                     <li><a href="{{ route('user.logoutPost') }}"><i class="fa fa-user-o"></i> Đăng xuất</a></li>
+                @endif
+        --}}
+
+            @if ($name == "")
+
+            <li><a href="{{ route('user.register') }}"><i class="fa fa-registered"></i> Đăng ký</a></li>
+            <li><a href="{{ route('user.login') }}"><i class="fa fa-user-o"></i> Đăng nhập</a></li>
+            @elseif ($name !="")
+            @php
+            $id_users = $id_user;
+            @endphp
+            <li><a style="color: white ">{{$name}}</a></li>
+            <li>
+                <div style="padding-top: 5%">
+                    <form action="{{ route('user.viewsprize') }}" method="POST" style="display: inline-block;">
+                        @csrf
+                        <input type="hidden" name="iduser" id="iduser" value="{{ $id_users }}">
+                        <button type="submit" style="background-color: transparent; border: none; cursor: pointer; display: flex; align-items: center;">
+                            <i class="fa fa-gift" style="color: white; margin-right: 0.5rem;"></i>
+                            <span style="color: white; font-size: 13px;">Quà tặng</span>
+                        </button>
+                    </form>
+                </div>
+            <li><a href="{{ route('user.logoutPost') }}"><i style="color: white;" class="fa fa-power-off"></i> Đăng xuất</a></li>
+            @endif
+
             </ul>
         </div>
     </div>
+    
     <!-- /TOP HEADER -->
 
     <!-- MAIN HEADER -->
@@ -52,25 +81,32 @@
                 <!-- ACCOUNT -->
                 <div class="col-md-3 clearfix">
                     <div class="header-ctn">
-                        <!-- Wishlist -->
-                        {{-- <div>
-                            <a href="#">
-                                <i class="fa fa-heart-o"></i>
-                                <span>Your Wishlist</span>
-                                <div class="qty">2</div>
-                            </a>
-                        </div> --}}
-                        <!-- /Wishlist -->
+                       
+                        @if ($name == "")
+                        @elseif ($name !="")
+                        <div style="padding-top: 5%">
+                            <form action="{{ route('user.viewdoder') }}" method="POST" style="display: inline-block;">
+                                @csrf
+                                <input type="hidden" name="iduser" id="iduser" value="{{ $id_user }}">
+                                <button type="submit" style="background-color: transparent; border: none; cursor: pointer; display: flex; align-items: center;">
+                                    <i class="fa fa-shopping-cart" style="color: white; margin-right: 0.5rem;"></i>
+                                    <span style="color: white; font-size: 13px;">Lịch sử</span>
+                                </button>
+                            </form>
+                        </div>
+
+
+                        @endif
 
                         <!-- Cart -->
-                        <div class="dropdown">
-                            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-                                <i class="fa fa-shopping-cart"></i>
-                                <span>Giỏ hàng</span>
+                        <div class="dropdown" style="padding-top: 5%">
+                            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" style="background-color: transparent; border: none; cursor: pointer; display: flex; align-items: center;">
+                                <i class="fa fa-cart-arrow-down" style="color: white; margin-right: 0.5rem;"></i>
                                 @if (session()->has('cart') && count(session('cart')) > 0)
-                                    <div class="qty">{{ session('cart_count') }}</div>
-                                @else
-                                @endif
+                                <div class="qty" style="margin-top: -5px; margin-right: -5px;">{{ session('cart_count') }}</div>
+                            @else
+                            @endif
+                                <span>Giỏ hàng</span>
                             </a>
                             <div class="cart-dropdown">
                                 @php
@@ -134,7 +170,12 @@
                                             class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
+                            
                         </div>
+                             <!-- Wishlist -->
+                         
+                           
+                            <!-- /Wishlist -->
                         <!-- /Cart -->
 
                         <!-- Menu Toogle -->

@@ -85,7 +85,8 @@
                             </div>
                         @else
                             <div class="text-center">
-                                <img src="https://newnet.vn/themes/newnet/assets/img/empty-cart.png" alt="">
+                                <img src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png" alt="" style="width: 30%">
+                                <p>Giỏ hàng trống. </p>
                             </div>
                         @endif
 

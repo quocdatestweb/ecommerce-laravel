@@ -12,3 +12,6 @@ Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('cart.cle
 Route::get('/cart/view', [CartController::class, 'viewCart'])->name('cart.view');
 Route::get('/cart/checkout', [CartController::class, 'checkOut'])->name('cart.checkout');
 Route::post('/cart/placeorder', [CartController::class, 'placeOrder'])->name('cart.placeorder');
+Route::post('/viewdoder', [CartController::class, 'vieworder'])->name('user.viewdoder');
+Route::get('/viewsdetail/{id}', [CartController::class, 'viewsdetail'])->name('user.viewsdetail');
+

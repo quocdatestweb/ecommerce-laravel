@@ -33,6 +33,11 @@ Route::group(['prefix'=>'admin'],function (){
         Route::get('/cart/details', [CartController::class, 'showOrderDetails'])->name('cart.details');
         Route::get('/viewdetail/{id}', [CartController::class, 'viewdetail'])->name('admin.viewdetail');
 
+
+        Route::get('/gift', [AdminController::class, 'getPrize'])->name('admin.gift');
+        Route::get('/winner', [AdminController::class, 'getAllWinner'])->name('admin.winner');
+
+
  });
 });
 

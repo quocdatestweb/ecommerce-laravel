@@ -20,7 +20,6 @@ class ProductController extends Controller
     protected $productCategoryRepository;
     protected $userRepository;
 
-
     public function __construct(ProductRepository $productRepository,ProductCategoryRepository $productCategoryRepository,UserRepository $userRepository)
     {
         $this->productRepository = $productRepository;
@@ -28,6 +27,7 @@ class ProductController extends Controller
         $this->userRepository = $userRepository;
 
     }
+    
 
     public function index()
     {
@@ -35,8 +35,9 @@ class ProductController extends Controller
         // $categorys =  $this->productCategoryRepository->getAll();
         // View::share('categorys', $categorys);
         $users = $this->userRepository->getAll();
+        $id_user = $auth_admin ? $auth_admin->id : null; // Perform null check
 
-        return view('products::products-user', ['products' => $products,'users' => $users]);
+        return view('products::products-user', ['products' => $products,'users' => $users,'id_user' => $id_user]);
     }
 
     public function admin()
@@ -57,14 +58,19 @@ class ProductController extends Controller
         $users = $this->userRepository->getAll();
         $products_limit_3 = Product::with('category')->paginate(3);
         $product_top_selling = Product::with('category')->paginate(16);
-
-        return view('products::content', ['product_top_selling' => $product_top_selling,'products' => $products,'products_limit_3' => $products_limit_3,'users' => $users]);
+        $auth_admin = Auth::guard('admin')->user();
+        $name = $auth_admin ? $auth_admin->name : null; // Perform null check
+        $id_user = $auth_admin ? $auth_admin->id : " "; // Perform null check
+        return view('products::content', ['product_top_selling' => $product_top_selling,'products' => $products,'products_limit_3' => $products_limit_3,'name'=>$name,'id_user' => $id_user]);
     }
 
     public function products_category(Request $request)
     {
         $category = $request->input('category');
         $categories= $request->input('categories');
+        $auth_admin = Auth::guard('admin')->user();
+        $id_user = $auth_admin ? $auth_admin->id : " "; // Perform null check
+        $name = $auth_admin ? $auth_admin->name : null; // Perform null check
 
         $products_limit_3 = Product::with('category')->paginate(3);
         // $categorys =  $this->productCategoryRepository->getAll();
@@ -83,7 +89,7 @@ class ProductController extends Controller
         }
 
 
-        return view('products::content', ['products' => $products,'product_top_selling' => $product_top_selling,'products_limit_3' => $products_limit_3,'users' => $users]);
+        return view('products::content', ['products' => $products,'product_top_selling' => $product_top_selling,'products_limit_3' => $products_limit_3,'users' => $users,'name'=>$name,'id_user' => $id_user]);
     }
 
 
@@ -92,7 +98,10 @@ class ProductController extends Controller
     {
         $categoryid = $request->input('categoryid');
         $productname = $request->input('productname');
+        $auth_admin = Auth::guard('admin')->user();
+        $id_user = $auth_admin ? $auth_admin->id : " "; // Perform null check
 
+        $name = $auth_admin ? $auth_admin->name : null; // Perform null check
         $products_limit_3 = Product::with('category')->paginate(3);
         // $categorys = $this->productCategoryRepository->getAll();
         $users = $this->userRepository->getAll();
@@ -103,7 +112,7 @@ class ProductController extends Controller
             ->orWhere('Name', 'like', '%' . $productname . '%')
             ->get();
 
-        return view('products::search', ['product_top_selling' => $product_top_selling,'products' => $products,'products_limit_3' => $products_limit_3,'users' => $users,'productname'=>$productname]);
+        return view('products::search', ['product_top_selling' => $product_top_selling,'products' => $products,'products_limit_3' => $products_limit_3,'users' => $users,'productname'=>$productname,'name'=>$name,'id_user' => $id_user]);
     }
 
 
@@ -141,9 +150,13 @@ class ProductController extends Controller
         // $categorys = $this->productCategoryRepository->getAll();
         $randomId = rand(1, 5);
         $products_limit_4 = Product::with('category')->where('CategoryID', $randomId)->paginate(4);
+        $auth_admin = Auth::guard('admin')->user();
+        $id_user = $auth_admin ? $auth_admin->id : " "; // Perform null check
 
+        $role = $auth_admin ? $auth_admin->role : null; // Perform null check
+        $name = $auth_admin ? $auth_admin->name : null; // Perform null check
         // Return the product details view with the retrieved product
-        return view('products::detail',  compact('products','products_limit_4'));
+        return view('products::detail',  compact('products','products_limit_4','role','name','id_user'));
     }
 
 
@@ -155,8 +168,10 @@ class ProductController extends Controller
         $users = $this->userRepository->getAll();
         $auth_admin = Auth::guard('admin')->user();
         $name = $auth_admin ? $auth_admin->name : null; // Perform null check
+        $id_user = $auth_admin ? $auth_admin->id : " "; // Perform null check
+
         // Return the edit product view with the retrieved product
-        return view('products::edit',['products' => $products,'users' => $users,'name'=>$name]);
+        return view('products::edit',['products' => $products,'users' => $users,'name'=>$name,'id_user' => $id_user]);
     }
  // $categorys =  $this->productCategoryRepository->getAll();
 

@@ -42,6 +42,7 @@
                     </a>
                 </li>
             </li>
+            
             <li class="heading">ORDERS</li>
             <li>
                 <li>
@@ -49,6 +50,19 @@
                         <span class="nav-label">Thống kê đơn hàng</span>
                     </a>
                 </li>
+            </li>
+            <li class="heading">GIFTS</li>
+            <li class="">
+                <a href="javascript:;" aria-expanded="false"><i class="sidebar-item-icon fa fa-gift"></i>
+                    <span class="nav-label">Quản lý quà tặng</span><i class="fa fa-angle-left arrow"></i></a>
+                <ul class="nav-2-level collapse" aria-expanded="false" style="height: 0px;">
+                    <li>
+                        <a  href="{{route('admin.gift')}}">Danh sách quà tặng</a>
+                    </li>
+                    <li>
+                        <a  href="{{route('admin.winner')}}">Danh sách trúng thưởng</a>
+                    </li>
+                </ul>
             </li>
         </ul>
     </div>
