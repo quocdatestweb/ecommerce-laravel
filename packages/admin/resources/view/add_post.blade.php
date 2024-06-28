@@ -19,7 +19,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="thumbImage">Thumbnail Image</label>
+                                <label for="thumbImage">Hình ảnh</label>
                                 <div class="form-group">
                                     <input name="thumb_image" type="file" class="form-control"
                                         id="imageUpload" accept="image/*">
@@ -28,7 +28,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="price">Description</label>
+                                <label for="price">Mô tả ngắn</label>
                                 <input type="text" class="form-control" id="description" name="description"
                                     required>
                             </div>
@@ -61,7 +61,7 @@
                                     <!-- Include options for categories here -->
                                 </select>
                             </div>
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label for="categoryid">Category</label>
                                 <select class="form-control" id="categoryid" name="categoryid" required>
                                     @foreach ($categorys as $category)
@@ -70,7 +70,7 @@
                                     @endforeach
                                     <!-- Include options for categories here -->
                                 </select>
-                            </div>
+                            </div> --}}
 
                         </div>
 

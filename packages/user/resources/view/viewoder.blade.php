@@ -14,10 +14,12 @@
                         <tr>
                             <th>STT</th>
                             <th>Mã HĐ</th>
-                            <th>Tên</th>
+                            {{-- <th>Tên</th>
                             <th>Email</th>
-                            <th>Số Điện Thoại</th>
+                            <th>Số Điện Thoại</th> --}}
                             <th>Địa Chỉ</th>
+                            <th>Số lượng</th>
+                            <th>Thời gian</th>
                             <th>Tổng Giá</th>
                             <th  class="text-center">Xem chi tiết</th>
 
@@ -34,10 +36,13 @@
                             <tr>
                                 <td>{{ $i}}</td>
                                 <td>{{ $row->order_number }}</td>
-                                <td>{{ $row->name }}</td>
+                                {{-- <td>{{ $row->name }}</td>
                                 <td>{{ $row->email }}</td>
-                                <td>{{ $row->phone_number }}</td>
+                                <td>{{ $row->phone_number }}</td> --}}
                                 <td>{{ $row->address }}</td>
+                                <td class="text-center">{{ $row->total_products }}</td>
+                                <td>{{ $row->created_at }}</td>
+
                                 <td>
                                     @php
                                     $p =  $row->total_price ;

@@ -142,9 +142,9 @@
                         <div class="form-group">
                             <input class="input" type="tel" name="tel" placeholder="Số điện thoại">
                         </div>
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <input class="input" type="text" name="coupon-code" placeholder="Coupon">
-                        </div>
+                        </div> --}}
                     </div>
                     <!-- /Billing Details -->
 

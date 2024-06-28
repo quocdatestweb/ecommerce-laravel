@@ -41,7 +41,7 @@ return [
             'port' => 587,
             'encryption' =>'tls',
             'username' => 'quocdatforwork@gmail.com',
-            'password' => 'pnci iztm qtku jcaq',
+            'password' => 'ddabeyoldairwpsl',
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN'),
         ],

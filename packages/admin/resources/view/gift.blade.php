@@ -14,7 +14,6 @@
                             <th>Ảnh</th>
                             <th>Tên giải thưởng</th>
                             <th>Tỉ lệ trúng</th>
-                            <th>Số lượng</th>
                             <th>Trạng thái</th>
                             <th>Thao tác</th>
                         </tr>
@@ -29,9 +28,31 @@
                             </td>
                             <td>{{ $prize->name }}</td>
                             <td>{{ $prize->winning_rate *100}}%</td>
-                            <td>{{ $prize->quantity }}</td>
                             <td>
+                                {{-- <span class="badge badge-{{ 
+                                    $prize->quantity == '0' ? 'warning' : 'primary'
+                                }}">
+                                    {{ 
+                                        $prize->quantity == '0' ? 'Hết ' : 'Còn'
+                                    }}
+                                </span>    --}}
                                 <span class="badge badge-{{ $prize->status == 'active' ? 'success' : 'secondary' }}">{{ $prize->status == 'active' ? 'Hiện' : 'Ẩn' }}</span>
+                            </td>
+                            <td>
+                                <div class="btn-group m-b-10">
+                                    <form action="{{ route('products.edit', ['id' => $prize->id]) }}" method="get">
+                                        @csrf
+                                        <button style=" background-color: transparent; border: none;" type="submit" class="m-r-5" data-toggle="tooltip" data-original-title="Edit">
+                                            <i class="fa fa-pencil font-14 text-secondary"></i>
+                                        </button >
+                                    </form>
+                                    <form id="deleteForm" action="{{ route('products.destroy', ['id' => $prize->id]) }}"
+                                        method="post">
+                                        @csrf
+                                        <a type="submit" data-toggle="tooltip" data-original-title="Delete"
+                                            onclick="confirmDelete(event)"><i class="fa fa-trash font-14 text-secondary"></i></a>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         @endforeach

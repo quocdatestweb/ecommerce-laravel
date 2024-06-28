@@ -12,14 +12,16 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Order ID</th>
-                            <th>Order Number</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone Number</th>
-                            <th>Address</th>
-                            <th>Total Price</th>
-                            <th>View</th>
+                            <th>STT</th>
+                            <th>Thời gian</th>
+                            <th>Mã hóa đơn</th>
+                            <th>Tên khách hàng</th>
+                            <th>Số lượng </th>
+                            {{-- <th>SĐT</th>
+                            <th>Địa chỉ</th> --}}
+                            <th>Trạng thái</th>
+                            <th>Tổng giá</th>
+                            <th>Xem </th>
 
                         </tr>
                     </thead>
@@ -33,13 +35,32 @@
                         @endphp
                             <tr>
                                 <td>{{ $i}}</td>
+                                <td>{{ date('d/m/Y H:m:s', strtotime($row->created_at)) }}</td>
                                 <td>{{ $row->order_number }}</td>
                                 <td>{{ $row->name }}</td>
-                                <td>{{ $row->email }}</td>
-                                <td>{{ $row->phone_number }}</td>
-                                <td>{{ $row->address }}</td>
-                                <td>{{ $row->total_price }}</td>
-                                <td><a class="btn btn-sm btn-success" href="{{ route('admin.viewdetail', ['id' => $row->order_id]) }}">Xem</a></td>
+                                <td class="text-center">{{ $row->total_products }}</td>
+                                {{-- <td>{{ $row->phone_number }}</td>
+                                <td>{{ $row->address }}</td> --}}
+                                @php
+                                $price = $row->total_price  ;
+                                $prices = number_format($price, 0, ',', '.') . '₫';
+                                @endphp
+                                <td>
+                                    <span class="badge badge-{{ $row->total_products != '1' ? 'danger' : 'success' }}">{{ $row->total_products != '1' ? 'Giao dịch thất bại': 'Giao dịch thành công'}}</span>
+                                </td>
+                                <td>{{ $prices }}</td>
+                                <td>
+                                    <div class="btn-group m-b-10">
+                                    <a class="m-r-5" href="{{ route('admin.viewdetail', ['id' => $row->order_id]) }}"><i class="fa-solid fa-eye text-secondary"></i></a>
+                                    <form id="deleteForm" action="{{ route('admin.destroy_order', ['id' => $row->order_id]) }}"
+                                        method="post">
+                                        @csrf
+                                        <a type="submit" data-toggle="tooltip" data-original-title="Delete"
+                                            onclick="confirmDelete(event)"><i class="fa fa-trash font-14 text-secondary"></i></a>
+                                    </form>
+                                    </div>
+                                
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

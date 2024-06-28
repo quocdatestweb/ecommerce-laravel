@@ -84,128 +84,43 @@ class UserController extends Controller
         return redirect()->route('user.login')->with('success', 'Registration successful. Please check your email for confirmation.');
     }
 
+    public function sendConfirmationEmail(User $user)
+    {
+        $data = [
+            'user' => $user,
+        ];
 
-    // public function authenticate(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'email' => 'required|email',
-    //         'password' => 'required',
-    //     ]);
+        // Mail::send('user::confirmation', $data, function ($message) use ($user) {
+        //     $message->subject('Xác nhận tài khoản')->to($user->email);
+        // });
 
-    //     if ($validator->passes()) {
-    //         if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
-    //             $admin = Auth::guard('admin')->user();
-    //             if ($admin && $admin->role == 1) {
-    //                 return redirect()->route('admin.index');
-    //             } else {
-    //                 Auth::guard('admin')->logout();
-    //                 return redirect()->route('user.login')->with('error', 'You are not authorized to access the admin panel.');
-    //             }
-    //         } else {
-    //             return redirect()->route('user.login')->with('error', 'Either email or password is incorrect.');
-    //         }
-    //     } else {
-    //         return redirect()->route('user.login')->withErrors($validator)->withInput($request->only('email'));
-    //     }
-    // }
+        try {
+            Mail::send('user::confirmation', $data, function ($message) use ($user) {
+              $message->subject('Xác nhận tài khoản')->to($user->email);
+              $message->from('quocdatforwork@gmail.com', 'Laravel Ecommerce');
+            });
+          } catch (\Exception $e) {
+            // Handle email sending error (log it or notify someone)
+            report($e);
+          }
+    }
 
-#20/05/24
-   // Controller code
+    public function confirmEmail($token)
+    {
+        $user = User::where('confirmation_token', $token)->first();
 
-//    public function authenticate(Request $request)
-//    {
-//        $validator = Validator::make($request->all(), [
-//            'email' => 'required|email',
-//            'password' => 'required',
-//        ]);
+        if (!$user) {
+            return redirect()->route('user.login')->with('error', 'Invalid confirmation token.');
+        }
 
-//        if ($validator->passes()) {
-//            if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password])) {
-//                $admin = Auth::guard('admin')->user();
-//                if ($admin->hasVerifiedEmail() && $admin->role == 0) {
-//                    return redirect()->route('admin.index');
+        $user->confirmation_token = null;
+        $user->email_verified_at = now();
+        $user->save();
 
-//                } elseif (!$admin->hasVerifiedEmail()) {
-//                    return redirect()->route('user.login')->with('error', 'Please verify your email address.');
+        return redirect()->route('user.login')->with('success', 'Email confirmed. You can now log in.');
+    }
 
-//                }else if ($admin->hasVerifiedEmail() && $admin->role == 1) {
-//                          return redirect()->route('products.products_user');
-//                } else {
-//                    Auth::guard('admin')->logout();
-//                    return redirect()->route('user.login')->with('error', 'You are not authorized to access the admin panel.');
-//                }
-//            } else {
-//                return redirect()->route('user.login')->with('error', 'Either email or password is incorrect.');
-//             }
-//        } else {
-//            return redirect()->route('user.login')
-//                ->withErrors($validator)
-//                ->withInput($request->only('email'));
-//        }
-//     }
-
-#6/6/2024
-
-// public function authenticate(Request $request)
-// {
-//     // Validate the form input
-//     $credentials = $request->validate([
-//         'email' => ['required', 'email'],
-//         'password' => ['required'],
-//     ]);
-
-//     // Attempt to log the user in
-//     if (Auth::attempt($credentials)) {
-//         $user = Auth::user();
-
-//         // Check the user's role
-//         if ($user->role == 0) {
-          
-//                 return redirect()->route('admin.index');
-//         } else {
-           
-//                 return redirect()->route('products.products_user');
-//         }
-//     }else{
-//         $error = 'Tên đăng nhập hoặc mật khẩu không đúng.';
-
-//     }
-
-//     $auth_admin = Auth::guard('admin')->user();
-//     $role = $auth_admin ? $auth_admin->role : null; // Perform null check
-//     // If authentication fails, redirect back with errors
-//     return view('user::login', ['role' => $role,'err' =>   $error ]);
-
-// }
-// public function authenticate(Request $request)
-// {
-//     $validator = Validator::make($request->all(), [
-//         'email' => 'required|email',
-//         'password' => 'required',
-//     ]);
-
-//     if ($validator->fails()) {
-//         return redirect()->route('user.login')
-//             ->withErrors($validator)
-//             ->withInput($request->only('email', 'password'));
-//     }
-
-//     if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password])) {
-//         $admin = Auth::guard('admin')->user();
-//         if ($admin->hasVerifiedEmail()) {
-//             if ($admin->role == 0) {
-//                 return redirect()->route('admin.index');
-//             } elseif ($admin->role == 1) {
-//                 return redirect()->route('products.products_user');
-//             }
-//         } else {
-//             return redirect()->route('user.login')->withErrors(['email' => 'Please verify your email address.']);
-//         }
-//     } else {
-//         return redirect()->route('user.login')->withErrors(['email' => 'Either email or password is incorrect.']);
-//     }
-// }
-
+   
 public function authenticate(Request $request){
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
@@ -258,42 +173,8 @@ public function authenticate(Request $request){
         return redirect()->route('user.login');
     }
 
-    public function sendConfirmationEmail(User $user)
-    {
-        $data = [
-            'user' => $user,
-        ];
-
-        // Mail::send('user::confirmation', $data, function ($message) use ($user) {
-        //     $message->subject('Xác nhận tài khoản')->to($user->email);
-        // });
-
-        try {
-            Mail::send('user::confirmation', $data, function ($message) use ($user) {
-              $message->subject('Xác nhận tài khoản')->to($user->email);
-              $message->from('quocdatforwork@gmail.com', 'Laravel Ecommerce');
-            });
-          } catch (\Exception $e) {
-            // Handle email sending error (log it or notify someone)
-            report($e);
-          }
-    }
-
-    public function confirmEmail($token)
-    {
-        $user = User::where('confirmation_token', $token)->first();
-
-        if (!$user) {
-            return redirect()->route('user.login')->with('error', 'Invalid confirmation token.');
-        }
-
-        $user->confirmation_token = null;
-        $user->email_verified_at = now();
-        $user->save();
-
-        return redirect()->route('user.login')->with('success', 'Email confirmed. You can now log in.');
-    }
-
+   
+   
     public function wheel()
     {
         $auth_admin = Auth::guard('admin')->user();
@@ -351,6 +232,8 @@ public function authenticate(Request $request){
         // Retrieve the necessary data from the request
         $userId = $request->input('userId');
         $giftText = $request->input('giftText');
+        $status = $request->input('status');
+
         $createdAt = Carbon::now()->setTimezone('Asia/Ho_Chi_Minh')->toDateTimeString();
         $updatedAt = Carbon::now()->setTimezone('Asia/Ho_Chi_Minh')->toDateTimeString();
 
@@ -369,24 +252,33 @@ public function authenticate(Request $request){
         $gift->image_url = $request->input('image_url');
         $gift->created_at = $createdAt;
         $gift->updated_at = $updatedAt;
+        
         $gift->save();
 
          // Retrieve the corresponding prize
         $prize = Prize::where('name', $giftText)->first();
 
         // Update the prize quantity if found
-        if ($prize && $giftText !== "Chúc bạn may mắn lần sau!") {
-            $prize->quantity--;
-            $prize->save();
-        }
+        if($giftText == "Thêm 2 lượt" ) {
+            $gift->status = 'active';
+            $gift->save();   
 
-        if ($giftText == "Thêm 2 lượt") {
-            $prize->quantity++;
-            $prize->save();
             $user->spins_left += 2;
             $user->save();
-        }
+        }else if($giftText == "Chúc bạn may mắn lần sau!") {
+            $gift->status = 'active';
+            $gift->save();   
 
+        }else if($status == "Đã hết") {
+            $gift->status = 'unactive';
+            $gift->save();   
+        }else{
+            $prize->quantity--;
+            $prize->save();
+        
+            $gift->status = 'inactive';
+            $gift->save();   
+        }
 
         return redirect()->back()->with('success', 'Phần thưởng đã được lưu thành công!');
 
@@ -401,7 +293,7 @@ public function authenticate(Request $request){
         $id_user = $auth_admin ? $auth_admin->id : null; // Perform null check
         $result = Gift::join('users', 'gifts.user_id', '=', 'users.id')
         ->where('users.id', $id_user)
-        ->select('gifts.image_url', 'gifts.created_at', 'gifts.gift_text', 'users.name')
+        ->select('gifts.status','gifts.image_url', 'gifts.created_at', 'gifts.gift_text', 'users.name')
         ->orderBy('gifts.created_at', 'desc') // Sort by created_at column in descending order
         ->paginate(10);
     

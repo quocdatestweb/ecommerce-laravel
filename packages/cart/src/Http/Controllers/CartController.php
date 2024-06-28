@@ -14,6 +14,7 @@ use datnguyen\user\Repositories\UserRepository;
 use datnguyen\post\Repositories\PostRepository;
 use datnguyen\post\Repositories\PostCategoryRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Mail;
 
 class CartController extends Controller
 {
@@ -96,10 +97,63 @@ class CartController extends Controller
             return $this->valid_from <= $now && $now <= $this->valid_to && ($this->usage_limit === null || $this->used_count < $this->usage_limit) && ($this->customer_id === null || $this->customer_id === $customerId);
         }
 
+    // public function placeOrder(Request $request)
+    // {
+    //     $order = new Order();
+
+    //     $order_number = mt_rand(100000, 999999);
+    //     $order->order_number = $order_number;
+    //     $order->name = $request->input('full-name');
+    //     $order->email = $request->input('email');
+    //     $order->phone_number = $request->input('tel');
+    //     $order->address = $request->input('address');
+    //     $order->id_user = $request->input('id_user');
+    //         // Retrieve the coupon code and apply the discount
+    //     $couponCode = $request->input('coupon-code');
+    //     $discount = 0;
+    //     if ($couponCode) {
+    //         $coupon = Coupon::where('code', $couponCode)->first();
+    //         if ($coupon && $coupon->isValid()) {
+    //             $discount = $coupon->calculateDiscount($order->getTotalAmount());
+    //             $order->discount_amount = $discount;
+    //             $coupon->used_count++;
+    //             $coupon->save();
+    //         }
+    //     }
+    //     $order->total_amount = $order->getTotalAmount() - $discount;
+    //     $order->save();
+    
+    //     $orderId = $order->id; // Get the ID of the saved order
+    
+    //     // Retrieve the cart items from the session
+    //     $cart = Session::get('cart', []);
+
+    //     // Save the cart items to the database
+    //     foreach ($cart as $cartItem) {
+    //         $orderItem = new OrderItem();
+    //         $orderItem->order_id = $orderId; // Map the order ID
+    //         $orderItem->product_id = $cartItem['product_id'];
+    //         $orderItem->product_name = $cartItem['name'];
+    //         $orderItem->quantity = $cartItem['quantity'];
+    //         $orderItem->price = $cartItem['price'];
+
+    //         $orderItem->save();
+    //     }
+
+    //     // Clear the cart in the session
+    //     Session::forget('cart');
+    //     Session::put('cart_count', 0); // Set the count in the cart session
+
+    //     // Optionally, perform any additional actions or calculations for the order
+    //     // ...
+    //     return back()->with('success', 'Order placed successfully');
+    // }
+
+
     public function placeOrder(Request $request)
     {
         $order = new Order();
-
+    
         $order_number = mt_rand(100000, 999999);
         $order->order_number = $order_number;
         $order->name = $request->input('full-name');
@@ -107,7 +161,8 @@ class CartController extends Controller
         $order->phone_number = $request->input('tel');
         $order->address = $request->input('address');
         $order->id_user = $request->input('id_user');
-            // Retrieve the coupon code and apply the discount
+    
+        // Retrieve the coupon code and apply the discount
         $couponCode = $request->input('coupon-code');
         $discount = 0;
         if ($couponCode) {
@@ -126,7 +181,7 @@ class CartController extends Controller
     
         // Retrieve the cart items from the session
         $cart = Session::get('cart', []);
-
+    
         // Save the cart items to the database
         foreach ($cart as $cartItem) {
             $orderItem = new OrderItem();
@@ -135,18 +190,149 @@ class CartController extends Controller
             $orderItem->product_name = $cartItem['name'];
             $orderItem->quantity = $cartItem['quantity'];
             $orderItem->price = $cartItem['price'];
-
+    
             $orderItem->save();
         }
-
+    
         // Clear the cart in the session
         Session::forget('cart');
         Session::put('cart_count', 0); // Set the count in the cart session
-
-        // Optionally, perform any additional actions or calculations for the order
-        // ...
+    
+        // Send the order email
+        $this->sendOrderEmail($order);
+    
         return back()->with('success', 'Order placed successfully');
     }
+    
+   private function sendOrderEmail(Order $order)
+{
+    $orderItems = $order->orderItems;
+    $orderId = $order->id; // Get the ID of the saved order
+    $orderItem= DB::table('order_items')
+    ->where('order_id',$orderId)
+    ->get();
+
+    $emailContent = '
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Order Confirmation</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+                background-color: #f5f5f5;
+            }
+            .header {
+                background-color: #D10024;
+                color: #fff;
+                padding: 20px;
+                text-align: center;
+            }
+            .order-details {
+                margin-top: 20px;
+            }
+            .order-item {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px 0;
+                border-bottom: 1px solid #ddd;
+            }
+            .total-amount {
+                text-align: right;
+                font-weight: bold;
+                margin-top: 20px;
+            }
+            .discount {
+                text-align: right;
+                margin-top: 10px;
+            }
+            .footer {
+                text-align: center;
+                margin-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Thank you for your order!</h1>
+            </div>
+            <div class="order-details">
+                <p>Order Number: ' . $order->order_number . '</p>
+                <p>Customer Name: ' . $order->name . '</p>
+                <p>Email: ' . $order->email . '</p>
+                <p>Phone Number: ' . $order->phone_number . '</p>
+                <p>Address: ' . $order->address . '</p>
+            </div>
+            <div class="order-items">
+                <h2>Order Items:</h2>
+                ';
+                
+                $emailContent .= '
+                       <table class="order-table" style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif;">
+                            <thead>
+                                <tr>
+                                <th style="background-color:#f2f2f2;padding:10px;text-align:left;border-bottom:1px solid #ddd;">Product Name</th>
+                                <th style="background-color:#f2f2f2;padding:10px;text-align:left;border-bottom:1px solid #ddd;">Quantity</th>
+                                <th style="background-color:#f2f2f2;padding:10px;text-align:left;border-bottom:1px solid #ddd;">Total</th>
+                                </tr>
+                            </thead>        
+                            <tbody>
+                        ';
+                        $total = 0;
+                        foreach ($orderItem as $item) {
+                            $itemTotal = $item->price * $item->quantity;
+                            $emailContent .= '
+                                <tr>
+                                    <td>' . $item->product_name . '</td>
+                                    <td>' . $item->quantity . '</td>
+                                    <td>' . number_format($item->price * $item->quantity,  0, ',', '.') . '₫'.'</td>
+                                </tr>
+                            ';
+                            $total += $itemTotal;
+                        }
+
+                        $emailContent .= '
+                            </tbody>
+                          
+                        </table>
+                        ';
+                
+                $emailContent .= '
+                    </div>
+                    <div class="total-amount">
+                        Total Amount: ' . number_format($total, 0, ',', '.') . '₫' . '
+                    </div>
+                ';
+
+
+    $emailContent .= '
+            <div class="footer">
+                Thank you for shopping with us!
+            </div>
+        </div>
+    </body>
+    </html>
+    ';
+
+    try {
+        Mail::html($emailContent, function ($message) use ($order) {
+            $message->to($order->email)
+                    ->subject('Order Confirmation - Order #' . $order->order_number)
+                    ->from('no-reply@yourstore.com', 'Laravel Ecommerce');
+        });
+    } catch (\Exception $e) {
+        // Handle the exception
+    }
+}
+    
 
     public function removeFromCart(Request $request)
     {
@@ -216,7 +402,9 @@ class CartController extends Controller
             'orders.email',
             'orders.phone_number',
             'orders.address',
-            DB::raw('SUM(order_items.quantity * order_items.price) as total_price')
+            'orders.created_at',
+            DB::raw('SUM(order_items.quantity * order_items.price) as total_price'),
+            DB::raw('COUNT(order_items.product_id) as total_products')
         )
         ->groupBy(
             'orders.id',
@@ -224,10 +412,10 @@ class CartController extends Controller
             'orders.name',
             'orders.email',
             'orders.phone_number',
-            'orders.address'
+            'orders.address',
+            'orders.created_at'
         )
         ->paginate(10);
-
         // Convert the result to a LengthAwarePaginator instance
         $paginator = new LengthAwarePaginator(
             $result->items(), // Get the items for the current page
@@ -245,15 +433,42 @@ class CartController extends Controller
     public function viewdetail($OrderId)
     {
         $result = Order::join('order_items', 'orders.id', '=', 'order_items.order_id')
-        ->join('products', 'order_items.product_id', '=', 'products.id')
-        ->where('orders.id', $OrderId) // Replace $yourOrderId with the actual ID
-        ->select('order_items.price','order_items.quantity','orders.id as order_id','orders.name', 'order_items.product_name','products.ThumbImage')
-        ->groupBy('order_items.price','order_items.quantity','orders.id','orders.name','order_items.product_name','products.ThumbImage')
-        ->get(); // Specify the number of items per page
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->where('orders.id', $OrderId)
+            ->select(
+                'orders.created_at',
+                'orders.order_number',
+                'orders.name',
+                'orders.address',
+                'orders.phone_number',
+                'order_items.price',
+                'order_items.quantity',
+                'orders.id as order_id',
+                'orders.name',
+                'order_items.product_name',
+                'products.ThumbImage',
+             
+            )
+            ->groupBy(
+                'orders.created_at',
+                'orders.order_number',
+                'orders.name',
+                'orders.address',
+                'orders.phone_number',
+                'order_items.price',
+                'order_items.quantity',
+                'orders.id',
+                'orders.name',
+                'order_items.product_name',
+                'products.ThumbImage'
+            )
+            ->get();
+    
         $users = $this->userRepository->getAll();
         $auth_admin = Auth::guard('admin')->user();
-        $name = $auth_admin ? $auth_admin->name : null; // Perform null check
-        return view('admin::details', ['result' => $result,'name' => $name]);
+        $name = $auth_admin ? $auth_admin->name : null;
+    
+        return view('admin::details', ['result' => $result, 'name' => $name]);
     }
 
 
@@ -262,7 +477,9 @@ class CartController extends Controller
         $result = Order::join('order_items', 'orders.id', '=', 'order_items.order_id')
         ->join('products', 'order_items.product_id', '=', 'products.id')
         ->where('orders.id', $OrderId) // Replace $yourOrderId with the actual ID
-        ->select('order_items.product_id','order_items.price','order_items.quantity','orders.id as order_id','orders.name', 'order_items.product_name','products.ThumbImage')
+        ->select('order_items.product_id','order_items.price','order_items.quantity','orders.id as order_id','orders.name', 'order_items.product_name','products.ThumbImage',
+        DB::raw('COUNT(order_items.product_id) as total_products')
+        )
         ->groupBy('order_items.product_id','order_items.price','order_items.quantity','orders.id','orders.name','order_items.product_name','products.ThumbImage')
         ->get(); // Specify the number of items per page
         $users = $this->userRepository->getAll();
@@ -301,7 +518,9 @@ class CartController extends Controller
             'orders.email',
             'orders.phone_number',
             'orders.address',
-            DB::raw('SUM(order_items.quantity * order_items.price) as total_price')
+            'orders.created_at',
+            DB::raw('SUM(order_items.quantity * order_items.price) as total_price'),
+            DB::raw('COUNT(order_items.product_id) as total_products')
         )
         ->groupBy(
             'orders.id',
@@ -309,7 +528,9 @@ class CartController extends Controller
             'orders.name',
             'orders.email',
             'orders.phone_number',
-            'orders.address'
+            'orders.address',
+            'orders.created_at'
+
         )
         ->where('orders.id_user', $Id)
         ->paginate(10);
@@ -331,6 +552,17 @@ class CartController extends Controller
         return view('user::viewoder', ['result' => $paginator,'name' => $name,'id_user' => $id_user]);
     }
 
+
+    public function destroy_order($id)
+    {
+        $order = Order::findOrFail($id);
+        $order->delete();
+    
+        $orderItems = OrderItem::where('order_id', $id)->delete();
+    
+        return redirect()->back()
+                         ->with('success', 'Order has been deleted successfully.');
+    }
     
 
     

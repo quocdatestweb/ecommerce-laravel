@@ -10,7 +10,8 @@
                         <ul id="ul" class="wheelss"></ul>
                     </span>
                     @if( $spins_left == 0 || $name == "")
-                
+                    <a id="spinsLeftDisplay" class=" order-submit toggle-btn" style=" display: inline-block; padding: 12px 30px; background-color: #3673df; border: none; border-radius: 40px; color: #FFF; text-transform: uppercase; font-weight: 700; text-align: center; -webkit-transition: 0.2s all; transition: 0.2s all;">Bạn còn {{ $spins_left }} lượt quay thưởng.</a>
+
                     @elseif( $spins_left == 0 && $name != "")
                     <a id="spinsLeftDisplay" class=" order-submit toggle-btn" style=" display: inline-block; padding: 12px 30px; background-color: #3673df; border: none; border-radius: 40px; color: #FFF; text-transform: uppercase; font-weight: 700; text-align: center; -webkit-transition: 0.2s all; transition: 0.2s all;">Bạn còn {{ $spins_left }} lượt quay thưởng.</a>
                     @else
@@ -35,7 +36,13 @@
                     success: function(response) {
                         // Update spins_left value on the page
                         $('#spinsLeftDisplay').text('Bạn còn ' +response.spins_left+' lượt quay thưởng.');
-                        
+                         // Check if spins_left is 0, and hide the button if so
+                            if (response.spins_left === 0) {
+                                $('#spinButton').hide();
+                            } else {
+                                $('#spinButton').show();
+
+                            }
                     },
                     error: function(xhr, status, error) {
                         console.error('Error fetching spins_left:', error);

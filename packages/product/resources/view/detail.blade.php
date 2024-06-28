@@ -84,7 +84,7 @@
 
                                     Qty
                                     <div class="input-number">
-                                        <input min="1" value="1" type="number" name="quantity" id="quantity">
+                                        <input min="1" value="0" type="number" name="quantity" id="quantitys">
                                         <span class="qty-up">+</span>
                                         <span class="qty-down">-</span>
                                     </div>

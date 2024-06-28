@@ -14,7 +14,7 @@
                             </div>
                             <div class="shop-body">
                                 <h3>{{ $product->Name }}</h3>
-                                <a href="{{ route('products.show', ['id' => $product->id]) }}" class="cta-btn">Shop now <i
+                                <a href="{{ route('products.show', ['id' => $product->id]) }}" class="cta-btn">Mua ngay <i
                                         class="fa fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
@@ -162,7 +162,7 @@
                                 </div>
                             </li>
                         </ul>
-                        <h2 class="text-uppercase">hot deal this week</h2>
+                        <h2 class="text-uppercase">hot deal this month</h2>
                         <p>New Collection Up to 50% OFF</p>
                         <a class="primary-btn cta-btn" href="#">Shop now</a>
                     </div>

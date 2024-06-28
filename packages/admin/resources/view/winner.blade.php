@@ -3,7 +3,7 @@
 <div class="page-content fade-in-up">
     <div class="ibox">
         <div class="ibox-head">
-            <div class="ibox-title">Thống kê sản phẩm</div>
+            <div class="ibox-title">Danh sách trúng thưởng</div>
         </div>
         <div class="ibox-body">
          
@@ -15,7 +15,9 @@
                             <th>Tên khách hàng</th>
                             <th>Ảnh</th>
                             <th>Sản phẩm trúng thưởng</th>
-                            <th>Ngày giờ trúng thưởng</th>
+                            <th>Thời gian</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
 
                         </tr>
                     </thead>
@@ -35,6 +37,20 @@
                             </td>
                             <td>
                                 {{ $winner->created_at}}
+                            </td>
+                            <td>
+                                <span class="badge badge-{{ 
+                                    $winner->status == 'unactive' ? 'warning' :
+                                    ($winner->status == 'inactive' ? 'danger' : 'primary')
+                                }}">
+                                    {{ 
+                                        $winner->status == 'unactive' ? 'Hết hàng' :
+                                        ($winner->status == 'inactive' ? 'Chưa trao' : 'Đã trao')
+                                    }}
+                                </span>                            
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-success">Trao thưởng</button>
                             </td>
                         </tr>
                     @endforeach

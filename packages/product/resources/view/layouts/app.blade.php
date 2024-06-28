@@ -183,19 +183,31 @@
     width: 50px; /* Adjust size based on your image dimensions */
     height: 50px; /* Adjust size based on your image dimensions */
     overflow: hidden;
+    transform: translateX(-50%);
+    z-index: 9999;
 }
 
 .spin-wheel {
+    display: block;
     width: 100%;
-    height: 100%;
+    height: auto;
+    animation: spin 2s linear infinite;
     object-fit: cover; /* Ensure the image covers the container */
     cursor: pointer;
     transition: transform 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
 }
 
 .spin-wheel:hover {
     transform: scale(1.1); /* Scale up on hover */
+}
+
+
+
+
+@keyframes spin {
+ 0% { transform: rotate(0deg); }
+ 100% { transform: rotate(360deg); }
 }
 
 .msg {
@@ -351,6 +363,10 @@ button {
 button:hover {
 	opacity: 0.8;
 }
+
+
+
+
 </style>
 </head>
 
@@ -576,21 +592,23 @@ button:hover {
     <script src="{{ asset('js/jquery.zoom.min.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const quantityInput = document.getElementById('quantity');
-            const qtyUpButton = document.querySelector('.qty-up');
-            const qtyDownButton = document.querySelector('.qty-down');
+   document.addEventListener('DOMContentLoaded', function() {
+    const quantityInput = document.getElementById('quantity');
+    const qtyUpButton = document.querySelector('.qty-ups');
+    const qtyDownButton = document.querySelector('.qty-downs');
 
-            qtyUpButton.addEventListener('click', function() {
-                quantityInput.stepUp();
-            });
+    qtyUpButton.addEventListener('click', function() {
+        let currentValue = parseInt(quantityInput.value);
+        quantityInput.value = currentValue + 1;
+    });
 
-            qtyDownButton.addEventListener('click', function() {
-                if (quantityInput.value > 1) {
-                    quantityInput.stepDown();
-                }
-            });
-        });
+    qtyDownButton.addEventListener('click', function() {
+        let currentValue = parseInt(quantityInput.value);
+        if (currentValue > 1) {
+            quantityInput.value = currentValue - 1;
+        }
+    });
+});
     </script>
 <script>
         // Set the target date and time for the countdown
@@ -642,9 +660,10 @@ const listGift = []; // Initialize an empty array
 
 @foreach ($prizes as $prize)
     listGift.push({
-        text: '{{ $prize->quantity > 0 ? $prize->name : "Chúc may mắn lần sau!" }}',
+        text: '{{ $prize->quantity > 0 ? $prize->name : " $prize->name" }}',
+        status: '{{ $prize->quantity > 0 ? "": "Đã hết" }}',
         percent: {{ $prize->winning_rate}},
-        img:  '{{ $prize->quantity > 0 ? $prize->description : "https://aman.gleecdn.com/file/1/ft/fTetc9mgoBF9XgL.png"  }}',
+        img:  '{{ $prize->quantity > 0 ? $prize->description :  $prize->description }}',
         // img: '{{ url('image/product/' . $prize->ThumbImage) }}'
     });
 @endforeach
@@ -682,6 +701,8 @@ elm.innerHTML = `
   <b> ${item.text}</b>
   <br>
   <img src="${item.img}" alt="${item.text}" width="50">
+  <br>
+  <b> ${item.status}</b>
 </p>
 `;
 
@@ -708,7 +729,7 @@ const start = () => {
     const gift = getGift(random);
 
     //=====< Số vòng quay: 360 độ = 1 vòng (Góc quay hiện tại) >=====
-    currentRotate += 360 * 10;
+    currentRotate += 360 * 100;
 
     //=====< Gọi hàm quay >=====
     rotatewheelss(currentRotate, gift.index);
@@ -748,18 +769,21 @@ const getGift = randomNumber => {
 /********** In phần thưởng ra màn hình **********/
 
 
+
 const showGift = (gift) => {
     let timer = setTimeout(() => {
         isRotating = false;
-
         // Hiển thị thông báo cho người dùng
         let message = `Chúc mừng bạn đã nhận được "${gift.text}"`;
         alert(message);
+   
+      
 
         // Lấy thông tin người dùng hiện tại (đã đăng nhập)
         let userId = '{{ $id_user }}'; // Get the ID of the authenticated user
         let username = '{{ $name }}'; // Get the name of the authenticated user
         let image_url = gift.img; // Get the name of the authenticated user
+        let status = gift.status;
         // Lưu thông tin phần thưởng
         saveGiftToServer(userId, username, gift.text,image_url);
 
@@ -767,42 +791,6 @@ const showGift = (gift) => {
     }, timeRotate);
 };
 
-// const saveGiftToServer = (userId, username, giftText,image_url) => {
-//     // Tạo một biểu mẫu HTML
-//     let form = document.createElement('form');
-//     form.setAttribute('method', 'post');
-//     form.setAttribute('action', '{{ route("user.save-gift") }}');
-
-//     // Thêm các trường vào biểu mẫu
-//     let userIdInput = document.createElement('input');
-//     userIdInput.setAttribute('type', 'hidden');
-//     userIdInput.setAttribute('name', 'userId');
-//     userIdInput.setAttribute('value', userId);
-//     form.appendChild(userIdInput);
-    
-//     let giftTextInput = document.createElement('input');
-//     giftTextInput.setAttribute('type', 'hidden');
-//     giftTextInput.setAttribute('name', 'giftText');
-//     giftTextInput.setAttribute('value', giftText);
-//     form.appendChild(giftTextInput);
-
-//     let image_urlTextInput = document.createElement('input');
-//     image_urlTextInput.setAttribute('type', 'hidden');
-//     image_urlTextInput.setAttribute('name', 'image_url');
-//     image_urlTextInput.setAttribute('value', image_url);
-//     form.appendChild(image_urlTextInput);
-
-
-//     let csrfInput = document.createElement('input');
-//     csrfInput.setAttribute('type', 'hidden');
-//     csrfInput.setAttribute('name', '_token');
-//     csrfInput.setAttribute('value', '{{ csrf_token() }}');
-//     form.appendChild(csrfInput);
-
-//     // Gửi biểu mẫu
-//     document.body.appendChild(form);
-//     form.submit();
-// };
 
 const saveGiftToServer = (userId, username, giftText, image_url) => {
   fetch('{{ route("user.save-gift") }}', {
@@ -814,7 +802,9 @@ const saveGiftToServer = (userId, username, giftText, image_url) => {
     body: JSON.stringify({
       userId: userId,
       giftText: giftText,
-      image_url: image_url
+      image_url: image_url,
+      status: status
+
     })
   })
   .then(response => {

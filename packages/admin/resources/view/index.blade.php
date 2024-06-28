@@ -65,7 +65,10 @@
                                 alt="">
                             </td>
                             <td>{{ $product->Name }}</td>
-                            <td>${{ $product->Price }}</td>
+                            @php
+                            $prices = number_format($product->Price, 0, ',', '.') . '₫';
+                            @endphp
+                            <td>{{ $prices }}</td>
                             <td> {{ $product->category->name }}</td>
                             <td>  @php
                                 $k = rand(1, 5);
@@ -79,15 +82,15 @@
                                 <div class="btn-group m-b-10">
                                     <form action="{{ route('products.edit', ['id' => $product->id]) }}" method="get">
                                         @csrf
-
-                                        <button type="submit" class="btn btn-default btn-xs m-r-5" data-toggle="tooltip" data-original-title="Edit"><i class="fa fa-pencil font-14 text-warning"></i></button>
+                                        <button style=" background-color: transparent; border: none;" type="submit" class="m-r-5" data-toggle="tooltip" data-original-title="Edit">
+                                            <i class="fa fa-pencil font-14 text-secondary"></i>
+                                        </button >
                                     </form>
                                     <form id="deleteForm" action="{{ route('products.destroy', ['id' => $product->id]) }}"
                                         method="post">
                                         @csrf
-
-                                        <button type="submit" class="btn btn-default btn-xs" data-toggle="tooltip" data-original-title="Delete"
-                                            onclick="confirmDelete(event)"><i class="fa fa-trash font-14 text-danger"></i></button>
+                                        <a type="submit" data-toggle="tooltip" data-original-title="Delete"
+                                            onclick="confirmDelete(event)"><i class="fa fa-trash font-14 text-secondary"></i></a>
                                     </form>
                                 </div>
                             </td>

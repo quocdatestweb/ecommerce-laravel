@@ -57,6 +57,8 @@ class ProductController extends Controller
         // $categorys =  $this->productCategoryRepository->getAll();
         $users = $this->userRepository->getAll();
         $products_limit_3 = Product::with('category')->paginate(3);
+        // $products_limit_3 = Product::where('CategoryID', 2)->get();
+
         $product_top_selling = Product::with('category')->paginate(16);
         $auth_admin = Auth::guard('admin')->user();
         $name = $auth_admin ? $auth_admin->name : null; // Perform null check
@@ -218,4 +220,6 @@ class ProductController extends Controller
 
         return back()->with('success', 'Product added to cart successfully');
     }
+
+
 }

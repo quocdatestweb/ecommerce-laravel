@@ -4,15 +4,26 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Console\Commands\UpdateUserSpinLeft;
 
 class Kernel extends ConsoleKernel
 {
-    /**
-     * Define the application's command schedule.
-     */
-    protected function schedule(Schedule $schedule): void
+    // /**
+    //  * Define the application's command schedule.
+    //  */
+    // protected function schedule(Schedule $schedule): void
+    // {
+    //     // $schedule->command('inspire')->hourly();
+    // }
+
+    protected $commands = [
+        UpdateUserSpinLeft::class,
+    ];
+
+    protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Ví dụ: Chạy command mỗi ngày lúc 0 giờ
+        $schedule->command('users:update-spin-left')->daily();
     }
 
     /**
@@ -24,4 +35,6 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
     }
+
+    
 }

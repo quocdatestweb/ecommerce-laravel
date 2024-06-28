@@ -10,8 +10,12 @@
                                 <img id="previewImage" style="width: 300px"
                                     src="{{ url('image/product/' . $products->ThumbImage) }}" alt="Maxwell Admin">
                             </div>
-                            <h5 class="user-name">{{ $products->Name }}</h5>
-                            <h3 class="user-email text-danger">${{ $products->Price }}</h3>
+                            <h5 class="user-name text-center">{{ $products->Name }}</h5>
+                            @php
+                            $price = $products->Price  ;
+                            $prices = number_format($price, 0, ',', '.') . '₫';
+                            @endphp
+                            <h3 class="user-email text-danger text-center">{{ $prices }}</h3>
                         </div>
                     </div>
                 </div>
@@ -26,25 +30,25 @@
                     <div class="card-body">
                         <div class="row gutters">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                <h6 class="mb-2 text-primary">Product Details</h6>
+                                <h6 class="mb-2 text-primary">Thông tin chi tiết sản phẩm</h6>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="name">Name</label>
+                                    <label for="name">Tên sản phẩm</label>
                                     <input type="text" class="form-control" id="name" name="name"
                                         value="{{ $products->Name }}">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="price">Price</label>
+                                    <label for="price">Giá</label>
                                     <input type="text" class="form-control" id="price" name="price"
                                         value="{{ $products->Price }}">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="website">Author</label>
+                                    <label for="website">Nhà sản xuất</label>
                                     <select class="form-control" id="author_id" name="author_id" required>
                                         <option value="{{ $products->Author_ID }}-{{ $products->Author_Type }}">
                                             {{ $products->Author_Type }}</option>
@@ -58,7 +62,7 @@
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="category"> Category</label>
+                                    <label for="category"> Thể loại</label>
                                     <select class="form-control" id="category" name="category" required>
                                         <option value="{{ $products->CategoryID }}">
                                             {{ $products->category->name }}</option>
@@ -72,14 +76,14 @@
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="create_at">Date</label>
+                                    <label for="create_at">Ngày</label>
                                     <input name="created_at" type="datetime-local" class="form-control" id="create_at"
                                         value="{{ $products->created_at }}">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="image">Image</label>
+                                    <label for="image">Hình ảnh</label>
                                     <br>
                                     <div class="custom-file">
                                         <input name="thumbImage" type="file" class="form-control" id="imageUpload"
@@ -90,7 +94,7 @@
                             </div>
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="form-group">
-                                    <label for="description">Description</label>
+                                    <label for="description">Mô tả</label>
                                     <textarea class="form-control" id="description" name="content" required>{{ $products->Content }}</textarea>
                                 </div>
                             </div>
@@ -100,9 +104,8 @@
                                 <div class="d-flex justify-content-end align-items-center">
                                     <div class="btn-group">
                                         <button onclick="confirmUpdate(event)" type="submit" id="submit" name="submit"
-                                            class="btn btn-primary">Update</button>
-                                        <button onclick="clearForm()" class="btn btn-danger ml-2">Clear
-                                            Form</button>
+                                            class="btn btn-primary">Cập nhật</button>
+                                        <button onclick="clearForm()" class="btn btn-danger ml-2">Xóa tất cả</button>
                                     </div>
                                 </div>
                             </div>
